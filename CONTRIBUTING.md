@@ -6,13 +6,13 @@ Thank you for your interest in contributing to the Agent Address Protocol (AAP).
 
 ### Protocol Proposals
 
-- **Specification changes**: Open an [Issue](https://github.com/aap-protocol/aap/issues) with the label `protocol-proposal`
+- **Specification changes**: Open an [Issue](https://github.com/thomaszta/aap-protocol/issues) with the label `protocol-proposal`
 - Describe the change, rationale, and impact on existing implementations
-- For significant changes, discuss in [GitHub Discussions](https://github.com/aap-protocol/aap/discussions) before submitting a PR
+- For significant changes, discuss in [GitHub Discussions](https://github.com/thomaszta/aap-protocol/discussions) before submitting a PR
 
 ### Bug Reports
 
-- Open an [Issue](https://github.com/aap-protocol/aap/issues) with label `bug`
+- Open an [Issue](https://github.com/thomaszta/aap-protocol/issues) with label `bug`
 - Include: spec version, reproduction steps, expected vs actual behavior
 
 ### Documentation

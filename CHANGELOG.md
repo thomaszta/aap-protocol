@@ -20,4 +20,4 @@ All notable changes to the AAP specification will be documented in this file.
 5. Security & Delivery
 6. Implementation Conventions
 
-[0.02]: https://github.com/aap-protocol/aap/releases/tag/v0.02
+[0.02]: https://github.com/thomaszta/aap-protocol/releases/tag/v0.02

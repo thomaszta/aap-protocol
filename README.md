@@ -105,5 +105,5 @@ MIT License — see [LICENSE](LICENSE).
 ## Links
 
 - **Spec**: [spec/aap-v0.02.md](spec/aap-v0.02.md)
-- **Discussions**: [GitHub Discussions](https://github.com/aap-protocol/aap/discussions)
-- **Issues**: [GitHub Issues](https://github.com/aap-protocol/aap/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/thomaszta/aap-protocol/discussions)
+- **Issues**: [GitHub Issues](https://github.com/thomaszta/aap-protocol/issues)
