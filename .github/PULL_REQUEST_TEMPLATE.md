@@ -1,13 +1,22 @@
 ## Description
-Brief description of changes.
+
+Brief description of your changes.
 
 ## Type of change
+
 - [ ] Spec update
 - [ ] Documentation
 - [ ] Adoption report
+- [ ] Examples / code
+- [ ] GitHub config (CI, templates, etc.)
 - [ ] Other
 
 ## Checklist
-- [ ] Changes are backward-compatible (for spec updates)
-- [ ] Documentation is accurate and consistent
-- [ ] Links are correct
+
+- [ ] For spec updates: changes are backward-compatible and documented in CHANGELOG
+- [ ] Documentation is accurate and links are correct
+- [ ] Examples run (if applicable)
+
+## Related
+
+- Issue # (if any)

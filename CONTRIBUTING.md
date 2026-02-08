@@ -25,15 +25,25 @@ Thank you for your interest in contributing to the Agent Address Protocol (AAP).
 - If your application implements AAP, consider adding an entry in [adopters/](adopters/)
 - Open a PR with a new file `adopters/your-app-name.md` following the template in [adopters/README.md](adopters/README.md)
 
+### Code Examples
+
+- See [examples/](examples/) for Python and JavaScript samples
+- New examples (other languages or use cases) are welcome; add a subfolder and a short README
+
 ## Pull Request Process
 
 1. Fork the repo
 2. Create a branch (`git checkout -b feature/your-change`)
 3. Make your changes
 4. Ensure any new spec text is clear and backward-compatible
-5. Submit a PR with a concise description
-6. Address review feedback
+5. Submit a PR with a concise description (the PR template will guide you)
+6. CI will run (markdown and structure checks); address any failures
+7. Address review feedback
 
 ## Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## Security
+
+See [SECURITY.md](.github/SECURITY.md) for how to report vulnerabilities.

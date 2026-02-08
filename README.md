@@ -1,5 +1,9 @@
 # Agent Address Protocol (AAP)
 
+[![CI](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml)
+[![Spec v0.02](https://img.shields.io/badge/spec-0.02-blue)](spec/aap-v0.02.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **AI 时代的开放式 Agent 寻址与通信标准**  
 The open protocol for Agent addressing and messaging in the AI era.
 

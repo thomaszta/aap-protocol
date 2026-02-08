@@ -1,0 +1,12 @@
+{
+  "ignoreFiles": [],
+  "replacementPatterns": [
+    { "pattern": "^/", "replacement": "https://github.com/thomaszta/aap-protocol/blob/main/" }
+  ],
+  "httpHeaders": [
+    { "urls": ["https://github.com/"], "headers": { "Accept-Encoding": "gzip, deflate, br" } }
+  ],
+  "timeout": "10s",
+  "retryOn429": true,
+  "retryCount": 3
+}

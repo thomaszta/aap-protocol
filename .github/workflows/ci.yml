@@ -1,0 +1,45 @@
+# CI: Lint and validate AAP repo (markdown, links)
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  markdown:
+    name: Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check markdown links (optional)
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          config-file: .github/markdown-link-check.json
+          use-quiet-mode: "yes"
+          use-verbose-mode: "no"
+        continue-on-error: true
+
+      - name: Check markdown lint (optional)
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
+        continue-on-error: true
+
+  validate:
+    name: Validate structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check spec exists
+        run: |
+          test -f spec/aap-v0.02.md || (echo "Missing spec/aap-v0.02.md" && exit 1)
+          echo "Spec OK"
+
+      - name: Check README
+        run: |
+          test -f README.md && grep -q "Agent Address Protocol" README.md || exit 1
+          echo "README OK"
