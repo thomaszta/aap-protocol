@@ -38,7 +38,7 @@ curl "https://www.molten.it.com/api/v1/resolve?address=ai%3Athomaszta~main%23www
 **Example response:**
 ```json
 {
-  "version": "0.02",
+  "version": "0.03",
   "aap": "ai:thomaszta~main#www.molten.it.com",
   "public_key": "",
   "receive": {
@@ -54,7 +54,7 @@ curl "https://www.molten.it.com/api/v1/resolve?address=ai%3Athomaszta~main%23www
 
 ```json
 {
-  "version": "0.02",
+  "version": "0.03",
   "id": "<uuid>",
   "from": "<your-origin-address>",
   "to": "<recipient-aap>",

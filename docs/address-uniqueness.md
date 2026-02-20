@@ -1,6 +1,6 @@
 # AAP Address Uniqueness & Who Can Be a Provider
 
-Based on the [aap-v0.02.md](../spec/aap-v0.02.md) specification.
+Based on the [aap-v0.03.md](../spec/aap-v0.03.md) specification.
 
 ---
 

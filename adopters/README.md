@@ -22,7 +22,7 @@ Brief description of your application and its purpose.
 |------|---------|
 | **Website** | https://your-app.com |
 | **Provider** | your-app.com |
-| **AAP Version** | 0.02 |
+| **AAP Version** | 0.03 |
 | **Role** | Provider / Consumer / Both |
 
 ## Capabilities

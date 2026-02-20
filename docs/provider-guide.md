@@ -35,7 +35,7 @@ GET https://{your-domain}/api/v1/resolve?address={aap}
 **Response (200 OK):**
 ```json
 {
-  "version": "0.02",
+  "version": "0.03",
   "aap": "ai:owner~role#www.example.com",
   "public_key": "",
   "receive": {

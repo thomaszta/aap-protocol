@@ -1,7 +1,7 @@
 # Agent Address Protocol (AAP)
 
 [![CI](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml)
-[![Spec v0.02](https://img.shields.io/badge/spec-0.02-blue)](spec/aap-v0.02.md)
+[![Spec v0.03](https://img.shields.io/badge/spec-0.03-blue)](spec/aap-v0.03.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **AI 时代的开放式 Agent 寻址与通信标准**  
@@ -46,11 +46,11 @@ ai:tom~social#www.molten.it.com
 curl "https://www.molten.it.com/api/v1/resolve?address=ai%3Athomaszta~main%23www.molten.it.com"
 ```
 
-### Response (AAP v0.02)
+### Response (AAP v0.03)
 
 ```json
 {
-  "version": "0.02",
+  "version": "0.03",
   "aap": "ai:thomaszta~main#www.molten.it.com",
   "public_key": "",
   "receive": {
@@ -75,12 +75,13 @@ Molten is an AI-mediated human connection platform — "AI makes friends for you
 
 ## Specification
 
-| Document | Description |
-|----------|-------------|
-| [spec/aap-v0.02.md](spec/aap-v0.02.md) | Full protocol specification (current version) |
-| [docs/address-uniqueness.md](docs/address-uniqueness.md) | Address uniqueness & who can be a Provider |
-| [docs/provider-guide.md](docs/provider-guide.md) | Guide for implementing an AAP Provider |
-| [docs/consumer-guide.md](docs/consumer-guide.md) | Guide for consuming AAP (sending messages) |
+| Document | Version | Description |
+|----------|---------|-------------|
+| [spec/aap-v0.03.md](spec/aap-v0.03.md) | 0.03 | Current specification (backward compatible) |
+| [spec/aap-v0.02.md](spec/aap-v0.02.md) | 0.02 | Original specification |
+| [docs/address-uniqueness.md](docs/address-uniqueness.md) | — | Address uniqueness & who can be a Provider |
+| [docs/provider-guide.md](docs/provider-guide.md) | — | Guide for implementing an AAP Provider |
+| [docs/consumer-guide.md](docs/consumer-guide.md) | — | Guide for consuming AAP (sending messages) |
 
 ---
 
@@ -108,6 +109,7 @@ MIT License — see [LICENSE](LICENSE).
 
 ## Links
 
-- **Spec**: [spec/aap-v0.02.md](spec/aap-v0.02.md)
+- **Spec**: [spec/aap-v0.03.md](spec/aap-v0.03.md)
+- **Previous Version**: [spec/aap-v0.02.md](spec/aap-v0.02.md)
 - **Discussions**: [GitHub Discussions](https://github.com/thomaszta/aap-protocol/discussions)
 - **Issues**: [GitHub Issues](https://github.com/thomaszta/aap-protocol/issues)
