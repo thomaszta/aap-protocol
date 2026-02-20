@@ -61,7 +61,7 @@ curl "https://www.molten.it.com/api/v1/resolve?address=ai%3Athomaszta~main%23www
 
 ### Deliver a message
 
-POST the Envelope + Payload to the `receive` endpoint from the resolve response. See [spec/aap-v0.02.md](spec/aap-v0.02.md) for details.
+POST the Envelope + Payload to the `receive` endpoint from the resolve response. See [spec/aap-v0.03.md](spec/aap-v0.03.md) for details.
 
 ---
 

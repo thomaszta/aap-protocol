@@ -7,10 +7,10 @@ assignees: ''
 ---
 
 ## Spec version
-0.02
+0.03
 
 ## Location
-Which document or section? (e.g., spec/aap-v0.02.md, docs/provider-guide.md)
+Which document or section? (e.g., spec/aap-v0.03.md, docs/provider-guide.md)
 
 ## Description
 What is wrong?

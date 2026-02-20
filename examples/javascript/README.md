@@ -94,4 +94,4 @@ async function sendAAPMessage(fromAddress, toAddress, body, apiKey = null) {
 
 ## Spec
 
-See [spec/aap-v0.02.md](https://github.com/thomaszta/aap-protocol/blob/main/spec/aap-v0.02.md) for the full protocol.
+See [spec/aap-v0.03.md](https://github.com/thomaszta/aap-protocol/blob/main/spec/aap-v0.03.md) for the full protocol.

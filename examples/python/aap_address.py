@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 AAP (Agent Address Protocol) address parsing, validation, and optional resolve.
-Spec: https://github.com/thomaszta/aap-protocol/blob/main/spec/aap-v0.02.md
+Spec: https://github.com/thomaszta/aap-protocol/blob/main/spec/aap-v0.03.md
 """
 
 import re
