@@ -11,14 +11,59 @@ Usage:
 """
 
 import uuid
-import hashlib
+import secrets
 from datetime import datetime
 from functools import wraps
 from flask import Flask, request, jsonify, g
-import json
 import os
 
 app = Flask(__name__)
+
+# ==================== 输入验证常量 ====================
+MAX_OWNER_LENGTH = 64
+MAX_ROLE_LENGTH = 64
+MAX_PROVIDER_LENGTH = 253
+VALID_CHARS = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."
+)
+
+# 验证地址组件
+def validate_address_component(value: str, name: str, max_len: int) -> bool:
+    """Validate a single address component. Returns True if valid."""
+    if not value:
+        return False
+    if len(value) > max_len:
+        return False
+    # 检查有效字符
+    return all(c in VALID_CHARS for c in value)
+
+# ==================== 错误码定义 (遵循 v0.03 规范) ====================
+
+ERROR_CODES = {
+    "INVALID_REQUEST": (400, "Invalid request format or missing required fields"),
+    "INVALID_ADDRESS": (400, "Address format is invalid"),
+    "ADDRESS_NOT_FOUND": (404, "Address not found on this Provider"),
+    "AUTHENTICATION_REQUIRED": (401, "Authentication required but not provided"),
+    "AUTHENTICATION_FAILED": (403, "Authentication provided but invalid"),
+    "INVALID_ENVELOPE": (400, "Message envelope is malformed"),
+    "RATE_LIMIT_EXCEEDED": (429, "Too many requests"),
+    "INTERNAL_ERROR": (500, "Provider internal error"),
+    "ALREADY_EXISTS": (409, "Agent already registered"),
+    "MISSING_FIELD": (400, "Missing required field"),
+    "WRONG_PROVIDER": (400, "Message not for this provider"),
+}
+
+
+def error_response(code: str, message: str = None):
+    """Return standardized error response."""
+    status, default_msg = ERROR_CODES.get(code, (500, "Internal error"))
+    return jsonify({
+        "error": {
+            "code": code,
+            "message": message or default_msg
+        }
+    }), status
+
 
 # ==================== 存储层 (可替换为真实数据库) ====================
 
@@ -27,12 +72,13 @@ class InMemoryDB:
     
     def __init__(self):
         self.agents = {}      # {aap_address: agent_data}
-        self.messages = {}     # {owner_role: [messages]}
+        self.messages = {}     # {owner_role: {idempotency_key: message}}
         self.api_keys = {}     # {api_key: owner_role}
+        self.idempotency = {}  # {idempotency_key: response}
     
     def register_agent(self, aap_address, model):
         owner_role = aap_address.split('#')[0].replace('ai:', '')
-        api_key = self._generate_api_key(aap_address)
+        api_key = self._generate_api_key()
         
         self.agents[aap_address] = {
             "aap_address": aap_address,
@@ -43,7 +89,7 @@ class InMemoryDB:
         }
         
         self.api_keys[api_key] = owner_role
-        self.messages[owner_role] = []
+        self.messages[owner_role] = {}
         
         return {
             "success": True,
@@ -53,9 +99,9 @@ class InMemoryDB:
             "message": "Agent registered successfully"
         }
     
-    def _generate_api_key(self, address):
-        raw = f"{address}{datetime.utcnow().isoformat()}"
-        return hashlib.sha256(raw.encode()).hexdigest()[:32]
+    def _generate_api_key(self):
+        """Generate secure API key using secrets module."""
+        return secrets.token_urlsafe(32)
     
     def resolve(self, aap_address):
         """Resolve AAP address"""
@@ -74,14 +120,36 @@ class InMemoryDB:
     def get_agent(self, aap_address):
         return self.agents.get(aap_address)
     
-    def add_message(self, owner_role, message):
+    def add_message(self, owner_role, message, idempotency_key=None):
+        """Add message with optional idempotency key."""
         if owner_role not in self.messages:
-            self.messages[owner_role] = []
-        self.messages[owner_role].append(message)
+            self.messages[owner_role] = {}
+        
+        # 幂等性检查
+        if idempotency_key and idempotency_key in self.messages[owner_role]:
+            return self.messages[owner_role][idempotency_key]
+        
+        msg_id = str(uuid.uuid4())
+        message["id"] = msg_id
+        message["received_at"] = datetime.utcnow().isoformat() + "Z"
+        
+        # 如果有幂等性 key，存储映射
+        if idempotency_key:
+            self.messages[owner_role][idempotency_key] = message
+        
+        # 同时存储到列表（用于获取）
+        if owner_role not in self.messages:
+            self.messages[owner_role] = {}
+        self.messages[owner_role]["_list"] = self.messages[owner_role].get("_list", [])
+        self.messages[owner_role]["_list"].append(message)
+        
+        return message
     
     def get_messages(self, owner_role, limit=20):
-        msgs = self.messages.get(owner_role, [])
-        return msgs[-limit:]
+        """Get messages for owner_role."""
+        msg_dict = self.messages.get(owner_role, {})
+        msg_list = msg_dict.get("_list", [])
+        return msg_list[-limit:]
     
     def verify_api_key(self, api_key):
         return self.api_keys.get(api_key)
@@ -136,18 +204,40 @@ def register_agent():
     data = request.get_json()
     
     if not data:
-        return jsonify({"error": "INVALID_REQUEST", "message": "Missing JSON body"}), 400
+        return error_response("INVALID_REQUEST", "Missing JSON body")
     
     aap_address = data.get("aap_address", "").strip()
     model = data.get("model", "unknown")
     
     # 简单验证
     if not aap_address.startswith("ai:"):
-        return jsonify({"error": "INVALID_ADDRESS", "message": "Address must start with 'ai:'"}), 400
+        return error_response("INVALID_ADDRESS", "Address must start with 'ai:'")
+    
+    # 检查长度
+    if len(aap_address) > 500:
+        return error_response("INVALID_ADDRESS", "Address too long (max 500 characters)")
+    
+    # 解析并验证各组件
+    try:
+        parts = aap_address[3:].split('#')
+        if len(parts) != 2:
+            return error_response("INVALID_ADDRESS", "Invalid address format")
+        owner_role, provider = parts
+        owner, role = owner_role.split('~')
+        if not owner or not role or not provider:
+            return error_response("INVALID_ADDRESS", "Empty component")
+        if not validate_address_component(owner, "owner", MAX_OWNER_LENGTH):
+            return error_response("INVALID_ADDRESS", "Invalid owner characters or too long")
+        if not validate_address_component(role, "role", MAX_ROLE_LENGTH):
+            return error_response("INVALID_ADDRESS", "Invalid role characters or too long")
+        if not validate_address_component(provider, "provider", MAX_PROVIDER_LENGTH):
+            return error_response("INVALID_ADDRESS", "Invalid provider characters or too long")
+    except Exception:
+        return error_response("INVALID_ADDRESS", "Invalid address format")
     
     # 检查是否已注册
     if db.get_agent(aap_address):
-        return jsonify({"error": "ALREADY_EXISTS", "message": "Agent already registered"}), 409
+        return error_response("ALREADY_EXISTS", "Agent already registered")
     
     result = db.register_agent(aap_address, model)
     return jsonify(result), 201
@@ -164,7 +254,7 @@ def resolve():
     
     Response:
         {
-            "version": "0.03",
+            "version": "0.04",
             "aap": "ai:name~role#provider.com",
             "public_key": "",
             "receive": {
@@ -175,15 +265,15 @@ def resolve():
     aap_address = request.args.get("address", "").strip()
     
     if not aap_address:
-        return jsonify({"error": "MISSING_ADDRESS", "message": "Address parameter required"}), 400
+        return error_response("INVALID_REQUEST", "Address parameter required")
+    
+    if len(aap_address) > 500:
+        return error_response("INVALID_ADDRESS", "Address too long")
     
     result = db.resolve(aap_address)
     
     if not result:
-        return jsonify({
-            "error": "NOT_FOUND",
-            "message": f"Address {aap_address} not found"
-        }), 404
+        return error_response("ADDRESS_NOT_FOUND", f"Address {aap_address} not found")
     
     # 转换为完整 URL（生产环境需要配置 BASE_URL）
     base_url = request.host_url.rstrip('/')
@@ -220,7 +310,7 @@ def receive_message(owner_role):
     data = request.get_json()
     
     if not data:
-        return jsonify({"error": "INVALID_REQUEST", "message": "Missing JSON body"}), 400
+        return error_response("INVALID_REQUEST", "Missing JSON body")
     
     envelope = data.get("envelope", {})
     payload = data.get("payload", {})
@@ -229,30 +319,30 @@ def receive_message(owner_role):
     required = ["from_addr", "to_addr"]
     for field in required:
         if not envelope.get(field):
-            return jsonify({"error": "MISSING_FIELD", "message": f"Missing required field: {field}"}), 400
+            return error_response("MISSING_FIELD", f"Missing required field: {field}")
     
     # 验证目标地址属于这个 Provider
     to_addr = envelope.get("to_addr", "")
-    expected_prefix = f"~#{request.host}"
     
     # 简单验证（生产环境需要更严格）
     if request.host not in to_addr:
-        return jsonify({"error": "WRONG_PROVIDER", "message": "Message not for this provider"}), 400
+        return error_response("WRONG_PROVIDER", "Message not for this provider")
     
-    # 存储消息
+    # 获取幂等性 key
+    idempotency_key = request.headers.get("X-Idempotency-Key")
+    
+    # 存储消息（支持幂等性）
     message = {
-        "id": str(uuid.uuid4()),
         "envelope": envelope,
-        "payload": payload,
-        "received_at": datetime.utcnow().isoformat() + "Z"
+        "payload": payload
     }
     
-    db.add_message(owner_role, message)
+    result = db.add_message(owner_role, message, idempotency_key)
     
     return jsonify({
         "success": True,
         "message": "Message received",
-        "message_id": message["id"]
+        "message_id": result["id"]
     }), 201
 
 

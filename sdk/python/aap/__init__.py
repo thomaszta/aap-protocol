@@ -7,20 +7,52 @@ Usage:
 """
 
 import re
+import secrets
 import urllib.parse
 import json
 from dataclasses import dataclass, asdict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+from time import sleep
 
 import requests
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
+
+# 重试配置
+DEFAULT_MAX_RETRIES = 3
+DEFAULT_RETRY_DELAY = 1.0  # 秒
 
 AAP_PATTERN = re.compile(
     r"^ai:([^~#]+)~([^#]+)#(.+)$",
     re.IGNORECASE
 )
+
+# 输入验证常量
+MAX_OWNER_LENGTH = 64
+MAX_ROLE_LENGTH = 64
+MAX_PROVIDER_LENGTH = 253  # DNS 域名最大长度
+VALID_CHARS = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."
+)
+
+
+def _validate_address_component(value: str, name: str, max_len: int) -> None:
+    """Validate a single address component."""
+    if not value:
+        raise InvalidAddressError(f"{name} cannot be empty")
+    
+    if len(value) > max_len:
+        raise InvalidAddressError(
+            f"{name} too long (max {max_len} characters): {len(value)}"
+        )
+    
+    # 检查有效字符
+    invalid_chars = set(value) - VALID_CHARS
+    if invalid_chars:
+        raise InvalidAddressError(
+            f"Invalid characters in {name}: {invalid_chars}"
+        )
 
 
 class AAPError(Exception):
@@ -40,6 +72,11 @@ class ResolveError(AAPError):
 
 class MessageError(AAPError):
     """Failed to send/receive message."""
+    pass
+
+
+class ProviderError(AAPError):
+    """Provider is unreachable or returned an error."""
     pass
 
 
@@ -74,6 +111,10 @@ def parse_address(address: str) -> AAPAddress:
     if not address:
         raise InvalidAddressError("Address cannot be empty")
     
+    # 总长度限制 (防止 DoS)
+    if len(address) > 500:
+        raise InvalidAddressError("Address too long (max 500 characters)")
+    
     addr = address.strip()
     if not addr.lower().startswith("ai:"):
         raise InvalidAddressError("Address must start with 'ai:'")
@@ -81,13 +122,16 @@ def parse_address(address: str) -> AAPAddress:
     m = AAP_PATTERN.match(addr)
     if not m:
         raise InvalidAddressError(
-            f"Invalid AAP address format: {address}. "
+            f"Invalid AAP address format: {address[:50]}... "
             "Expected: ai:owner~role#provider"
         )
     
     owner, role, provider = m.groups()
-    if not owner or not role or not provider:
-        raise InvalidAddressError("Owner, role, and provider cannot be empty")
+    
+    # 验证各组件
+    _validate_address_component(owner, "owner", MAX_OWNER_LENGTH)
+    _validate_address_component(role, "role", MAX_ROLE_LENGTH)
+    _validate_address_component(provider, "provider", MAX_PROVIDER_LENGTH)
     
     return AAPAddress(owner=owner, role=role, provider=provider.strip().lower())
 
@@ -173,16 +217,65 @@ class AAPClient:
         messages = client.fetch_inbox("ai:tom~novel#molten.com", api_key="...")
     """
     
-    def __init__(self, timeout: int = 10, verify_ssl: bool = True):
+    def __init__(
+        self,
+        timeout: int = 10,
+        verify_ssl: bool = True,
+        max_retries: int = DEFAULT_MAX_RETRIES,
+        retry_delay: float = DEFAULT_RETRY_DELAY
+    ):
         """
         Initialize AAP Client.
         
         Args:
             timeout: Request timeout in seconds
             verify_ssl: Whether to verify SSL certificates (set to False for local testing)
+            max_retries: Maximum number of retries for failed requests
+            retry_delay: Delay between retries in seconds
         """
         self.timeout = timeout
         self.verify_ssl = verify_ssl
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+    
+    def _request_with_retry(self, method: str, url: str, **kwargs) -> requests.Response:
+        """
+        Make HTTP request with retry logic.
+        
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            url: Request URL
+            **kwargs: Additional arguments for requests
+            
+        Returns:
+            Response object
+            
+        Raises:
+            ProviderError: If all retries fail
+        """
+        last_error = None
+        
+        for attempt in range(self.max_retries):
+            try:
+                r = requests.request(
+                    method=method,
+                    url=url,
+                    timeout=self.timeout,
+                    verify=self.verify_ssl,
+                    **kwargs
+                )
+                r.raise_for_status()
+                return r
+            except requests.RequestException as e:
+                last_error = e
+                if attempt < self.max_retries - 1:
+                    sleep(self.retry_delay * (attempt + 1))  # 指数退避
+                    continue
+                raise ProviderError(
+                    f"Provider unreachable after {self.max_retries} attempts: {url}"
+                ) from last_error
+        
+        raise ProviderError(f"Request failed: {last_error}")
     
     def _get_url(self, provider: str, path: str) -> str:
         """Get URL, using http for localhost."""
@@ -262,11 +355,10 @@ class AAPClient:
         params = {"address": str(addr)}
         
         try:
-            r = requests.get(url, params=params, timeout=self.timeout, verify=self.verify_ssl)
-            r.raise_for_status()
+            r = self._request_with_retry("GET", url, params=params)
             data = r.json()
             return ResolveResult.from_dict(data)
-        except requests.RequestException as e:
+        except ProviderError as e:
             raise ResolveError(f"Failed to resolve {address}: {e}")
     
     def send_message(
@@ -277,7 +369,8 @@ class AAPClient:
         message_type: str = "private",
         reply_to: Optional[str] = None,
         content_type: str = "text/plain",
-        metadata: Optional[Dict] = None
+        metadata: Optional[Dict] = None,
+        idempotency_key: Optional[str] = None
     ) -> Dict:
         """
         Send a message to another Agent.
@@ -290,6 +383,7 @@ class AAPClient:
             reply_to: Original message ID if replying
             content_type: MIME type (default: text/plain)
             metadata: Optional metadata dict
+            idempotency_key: Optional key to prevent duplicate messages
         
         Returns:
             API response dict
@@ -321,17 +415,22 @@ class AAPClient:
             "payload": payload.to_dict()
         }
         
+        # 添加幂等性 key
+        headers = {"Content-Type": "application/json"}
+        if idempotency_key:
+            headers["X-Idempotency-Key"] = idempotency_key
+        elif message_type == "private":
+            headers["X-Idempotency-Key"] = secrets.token_urlsafe(16)
+        
         try:
-            r = requests.post(
+            r = self._request_with_retry(
+                "POST",
                 inbox_url,
                 json=body,
-                headers={"Content-Type": "application/json"},
-                timeout=self.timeout,
-                verify=self.verify_ssl
+                headers=headers
             )
-            r.raise_for_status()
             return r.json()
-        except requests.RequestException as e:
+        except ProviderError as e:
             raise MessageError(f"Failed to send message: {e}")
     
     def fetch_inbox(
@@ -358,10 +457,9 @@ class AAPClient:
         params = {"limit": limit}
         
         try:
-            r = requests.get(url, headers=headers, params=params, timeout=self.timeout, verify=self.verify_ssl)
-            r.raise_for_status()
+            r = self._request_with_retry("GET", url, headers=headers, params=params)
             return r.json().get("messages", [])
-        except requests.RequestException as e:
+        except ProviderError as e:
             raise MessageError(f"Failed to fetch inbox: {e}")
     
     def publish(
