@@ -145,6 +145,135 @@ ai:bob~main#provider2.com
               - 最终目标
 ```
 
+---
+
+## 阶段1: 域名直连 (v0.04) 详细设计
+
+### 目标
+
+最小实现，让不同 Provider 的 Agent 能互相发现和通信。
+
+### 设计原则
+
+1. **零额外依赖** - 不需要 DNS 配置、不需要种子节点
+2. **向后兼容** - 不影响 v0.03 的所有功能
+3. **预留扩展** - SDK 预留接口，未来可叠加 DNS
+
+### 实现方案
+
+#### 1. SDK 修改
+
+```python
+# sdk/python/aap/__init__.py 新增
+
+class AAPClient:
+    def _resolve_provider(self, address: str) -> dict:
+        """
+        解析 Provider 端点（阶段1: 域名直连）
+        
+        预留扩展：未来可以叠加 DNS SRV 发现
+        """
+        addr = parse_address(address)
+        provider = addr.provider
+        
+        # 阶段1: 直接构造 URL（域名直连）
+        base_url = self._get_base_url(provider)
+        
+        return {
+            "provider": provider,
+            "resolve_url": f"{base_url}/api/v1/resolve",
+            "inbox_url": f"{base_url}/api/v1/inbox",
+            "discovery_method": "direct"  # 标记发现方式
+        }
+    
+    def _get_base_url(self, provider: str) -> str:
+        """
+        获取 Provider 基础 URL
+        
+        阶段1: 直接用 https://{provider}
+        未来: 可以先尝试 DNS SRV，失败则 fallback
+        """
+        if "localhost" in provider or "127.0.0.1" in provider:
+            return f"http://{provider}"
+        return f"https://{provider}"
+```
+
+#### 2. API 兼容
+
+现有的 API 不变：
+- `GET /api/v1/resolve?address=...` 保持不变
+- `POST /api/v1/inbox/{owner_role}` 保持不变
+
+#### 3. 新增可选端点 (Provider 可选实现)
+
+```http
+# 可选：Provider 信息端点
+GET /api/v1/providers/info
+
+Response:
+{
+  "provider": "fiction.molten.it.com",
+  "version": "0.04",
+  "capabilities": ["resolve", "inbox", "register"],
+  "discovery_method": "direct"  # 告诉客户端发现方式
+}
+```
+
+#### 4. 错误处理增强
+
+```json
+{
+  "error": {
+    "code": "provider_unreachable",
+    "message": "无法连接到 provider.com，请检查域名"
+  }
+}
+```
+
+### 工作流程
+
+```
+Agent A (provider1.com)
+    │
+    │ 1. 知道目标地址: ai:bob~novel#provider2.com
+    │
+    ▼
+解析地址 → provider2.com
+    │
+    ▼
+直接构造 URL
+https://provider2.com/api/v1/resolve?address=ai:bob~novel#provider2.com
+    │
+    ▼
+请求 Provider2 的 Resolve API
+    │
+    ▼
+获取 inbox_url → 发送消息
+```
+
+### 限制与注意事项
+
+1. **需要知道完整域名** - 地址里已经包含
+2. **无法验证 Provider 身份** - 阶段1 不做信任
+3. **无法获取 Provider 列表** - 不知道有哪些 Provider
+4. **网络可达性** - 两边需要能互相访问
+
+### 验收标准
+
+- [ ] SDK 能正确解析任意 AAP 地址的 Provider
+- [ ] 跨 Provider 消息发送成功
+- [ ] 错误提示清晰（域名不可达等）
+- [ ] 向后兼容 v0.03
+
+### 里程碑
+
+- [ ] SDK 修改完成
+- [ ] Provider 模板更新
+- [ ] 文档更新
+- [ ] 测试验证（本地两个 Provider 互发消息）
+
+---
+
 ### 每个阶段的设计原则
 
 1. **向后兼容** - 新阶段不破坏旧阶段的功能
