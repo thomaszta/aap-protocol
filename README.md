@@ -160,6 +160,7 @@ python app.py
 | [docs/address-uniqueness.md](docs/address-uniqueness.md) | — | Address uniqueness & who can be a Provider |
 | [docs/provider-guide.md](docs/provider-guide.md) | — | Guide for implementing an AAP Provider |
 | [docs/consumer-guide.md](docs/consumer-guide.md) | — | Guide for consuming AAP (sending messages) |
+| [docs/aap-vs-a2a.md](docs/aap-vs-a2a.md) | — | Comparison with Google A2A protocol |
 
 ---
 
