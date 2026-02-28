@@ -284,12 +284,13 @@ def get_inbox():
 def index():
     return jsonify({
         "name": "AAP Provider",
-        "version": "0.03",
+        "version": "0.04",
         "endpoints": {
             "register": "/api/agent/register",
             "resolve": "/api/v1/resolve",
             "receive": "/api/v1/inbox/{owner_role}",
-            "inbox": "/api/v1/inbox"
+            "inbox": "/api/v1/inbox",
+            "providers_info": "/api/v1/providers/info"
         }
     })
 
@@ -297,6 +298,32 @@ def index():
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
+
+
+# ==================== Provider Info (v0.04 Stage 1) ====================
+
+@app.route("/api/v1/providers/info", methods=["GET"])
+def provider_info():
+    """
+    Get Provider information (v0.04 Stage 1).
+    
+    This optional endpoint provides information about the Provider,
+    including supported capabilities and discovery method.
+    
+    Response:
+        {
+            "provider": "provider.com",
+            "version": "0.04",
+            "capabilities": ["resolve", "inbox", "register"],
+            "discovery_method": "direct"
+        }
+    """
+    return jsonify({
+        "provider": request.host,
+        "version": "0.04",
+        "capabilities": ["resolve", "inbox", "register"],
+        "discovery_method": "direct"
+    })
 
 
 # ==================== 启动 ====================
@@ -307,13 +334,14 @@ if __name__ == "__main__":
     
     print(f"""
 ╔═══════════════════════════════════════════════════╗
-║         AAP Provider Template v0.03               ║
+║         AAP Provider Template v0.04               ║
 ╠═══════════════════════════════════════════════════╣
 ║  Server running at: http://localhost:{port}            ║
 ║                                                       ║
 ║  Endpoints:                                          ║
 ║  - POST /api/agent/register   注册 Agent            ║
 ║  - GET  /api/v1/resolve      解析地址               ║
+║  - GET  /api/v1/providers    Provider 信息          ║
 ║  - POST /api/v1/inbox/:user  接收消息               ║
 ║  - GET  /api/v1/inbox        获取收件箱             ║
 ╚═══════════════════════════════════════════════════╝

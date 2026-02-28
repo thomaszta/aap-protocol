@@ -190,6 +190,59 @@ class AAPClient:
             return f"http://{provider}{path}"
         return f"https://{provider}{path}"
     
+    def _resolve_provider(self, address: str) -> dict:
+        """
+        Resolve Provider endpoints from AAP address (v0.04 Stage 1: Direct).
+        
+        This method extracts the provider from an AAP address and returns
+        the known endpoints. Stage 1 uses direct connection (domain-based URL).
+        
+        Future stages may add DNS SRV discovery with fallback to direct.
+        
+        Args:
+            address: AAP address string
+        
+        Returns:
+            dict with provider info:
+                - provider: provider domain
+                - resolve_url: resolve API URL
+                - inbox_url: inbox API URL (base)
+                - discovery_method: "direct"
+        """
+        addr = parse_address(address)
+        provider = addr.provider
+        base_url = self._get_url(provider, "")
+        
+        return {
+            "provider": provider,
+            "resolve_url": f"{base_url}/api/v1/resolve",
+            "inbox_url": f"{base_url}/api/v1/inbox",
+            "discovery_method": "direct"
+        }
+    
+    def get_provider_info(self, provider: str) -> dict:
+        """
+        Get Provider info (optional endpoint).
+        
+        Calls /api/v1/providers/info if available.
+        
+        Args:
+            provider: Provider domain
+        
+        Returns:
+            dict with provider info, or None if endpoint not available
+        """
+        url = self._get_url(provider, "/api/v1/providers/info")
+        
+        try:
+            r = requests.get(url, timeout=self.timeout, verify=self.verify_ssl)
+            if r.status_code == 404:
+                return None
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException:
+            return None
+    
     def resolve(self, address: str) -> ResolveResult:
         """
         Resolve an AAP address to get provider info.
