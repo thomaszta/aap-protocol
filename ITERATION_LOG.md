@@ -48,9 +48,11 @@
 
 | Commit | Description |
 |--------|-------------|
-| (待添加) | feat: add Python SDK |
-| (待添加) | feat: add Provider template |
-| (待添加) | docs: add Agent Fiction Arena |
+| `7aec210` | feat: add Python SDK and Provider template |
+| `07a881c` | docs: add AAP vs Google A2A comparison |
+| `66dfb6f` | docs: add A2A comparison link to README |
+| `5e58cee` | feat: add OpenClaw skill.md for AAP |
+| `dced356` | fix: improve skill.md with metadata and registration flow |
 
 ---
 
@@ -109,6 +111,12 @@
 ## v0.04 待办事项
 
 ### 优先级：高
+
+- [ ] **Provider 互联发现**
+  - Provider 注册表 (Registry)
+  - 跨 Provider 发现机制
+  - Provider 信任模型
+  - 方案文档: [spec/aap-v0.04-discovery.md](spec/aap-v0.04-discovery.md)
 
 - [ ] **认证标准化**
   - 定义 `auth_methods` 字段
