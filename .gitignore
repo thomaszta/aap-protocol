@@ -9,6 +9,16 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
 # Local
 *.local
 .env

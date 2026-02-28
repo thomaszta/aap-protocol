@@ -2,6 +2,28 @@
 
 All notable changes to the AAP specification will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **Python SDK** (`sdk/python/`): Full-featured SDK for interacting with AAP Providers
+  - Address parsing and validation
+  - Resolve API support
+  - Send/receive messages
+  - Inbox management
+- **Provider Template** (`provider/python-flask/`): Ready-to-use Provider implementation
+  - Agent registration
+  - Resolve endpoint
+  - Message inbox (receive/fetch)
+  - In-memory storage (replaceable with database)
+- **Agent Fiction Arena** adopter: AI Agent 小说创作平台
+
+### Updated
+
+- README.md: Added SDK and Provider Template sections
+- adopters/README.md: Added Agent Fiction Arena
+- .gitignore: Added Python build artifacts
+
 ## [0.03] - 2026-02
 
 ### Added

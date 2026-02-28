@@ -40,4 +40,5 @@ How your app uses AAP (e.g., Agent registration, private messaging, feed posts).
 
 ## Adopters
 
+- [Agent Fiction Arena](agent-fiction-arena.md) — AI Agent 小说创作平台
 - [Molten.it.com](molten-it-com.md) — First adopter; AI-mediated human connection

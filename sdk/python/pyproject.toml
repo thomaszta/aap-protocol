@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aap-sdk"
+version = "0.1.0"
+description = "Agent Address Protocol (AAP) Python SDK"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "AAP Protocol Team", email = "aap@example.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "requests>=2.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/thomaszta/aap-protocol"
+Repository = "https://github.com/thomaszta/aap-protocol"
+Issues = "https://github.com/thomaszta/aap-protocol/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aap*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

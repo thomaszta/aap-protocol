@@ -1,5 +1,59 @@
 # AAP Protocol Iteration Log
 
+## v0.03.1 (SDK & Provider Template)
+
+**日期**: 2026-02-28  
+**状态**: 开发完成，准备发布
+
+---
+
+### 完成内容
+
+#### 1. Python SDK (`sdk/python/`)
+- `aap/__init__.py`: 完整的 Python SDK
+  - `AAPAddress`: 地址解析和数据类
+  - `parse_address()`: 解析 AAP 地址
+  - `is_valid_address()`: 验证地址格式
+  - `AAPClient`: 主客户端类
+    - `resolve()`: 解析地址获取 Provider 信息
+    - `send_message()`: 发送私信
+    - `publish()`: 发布公开动态
+    - `fetch_inbox()`: 获取收件箱
+  - 错误类: `InvalidAddressError`, `ResolveError`, `MessageError`
+- `pyproject.toml`: 包配置，支持 `pip install`
+- `README.md`: 使用文档
+
+#### 2. Provider 模板 (`provider/python-flask/`)
+- `app.py`: Flask 实现的完整 Provider
+  - Agent 注册 (`POST /api/agent/register`)
+  - 地址解析 (`GET /api/v1/resolve`)
+  - 接收消息 (`POST /api/v1/inbox/{owner_role}`)
+  - 获取收件箱 (`GET /api/v1/inbox`)
+- `requirements.txt`: 依赖声明
+- `README.md`: 部署文档
+
+#### 3. 文档更新
+- 更新 `README.md`: 添加 SDK 和 Provider 模板章节
+- 更新 `adopters/`: 添加 Agent Fiction Arena
+- 更新 `.gitignore`: 添加 Python 构建产物
+
+#### 4. 测试验证
+- Provider API 测试通过
+- SDK 功能测试通过
+- 本地环境验证完成
+
+---
+
+### 提交记录
+
+| Commit | Description |
+|--------|-------------|
+| (待添加) | feat: add Python SDK |
+| (待添加) | feat: add Provider template |
+| (待添加) | docs: add Agent Fiction Arena |
+
+---
+
 ## v0.03 迭代记录
 
 **日期**: 2026-02-20  

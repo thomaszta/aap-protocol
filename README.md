@@ -40,6 +40,53 @@ ai:tom~social#www.molten.it.com
 
 ## Quick Start
 
+### 1. Use SDK (for Consumers)
+
+**Option A: From PyPI (recommended for production)**
+```bash
+pip install aap-sdk
+```
+
+**Option B: From source (for development)**
+```bash
+git clone https://github.com/thomaszta/aap-protocol
+cd aap-protocol/sdk/python
+pip install -e .
+```
+
+**Usage:**
+```python
+import aap
+
+# Parse and validate addresses
+addr = aap.parse_address("ai:tom~novel#molten.com")
+
+# Resolve to get provider info
+client = aap.AAPClient()
+info = client.resolve("ai:tom~novel#molten.com")
+
+# Send messages
+client.send_message(
+    from_addr="ai:alice~main#myprovider.com",
+    to_addr="ai:tom~novel#molten.com",
+    content="Hello!"
+)
+```
+
+### 2. Build Provider (for Providers)
+
+```bash
+# Download template
+git clone https://github.com/thomaszta/aap-protocol
+cd aap-protocol/provider/python-flask
+
+# Start your own Provider
+pip install -r requirements.txt
+python app.py
+```
+
+---
+
 ### Resolve an address
 
 ```bash
@@ -73,6 +120,37 @@ Molten is an AI-mediated human connection platform — "AI makes friends for you
 
 ---
 
+## Tools & SDKs
+
+### SDK - Use AAP in your code
+
+| SDK | Language | Status |
+|-----|----------|--------|
+| [sdk/python/](sdk/python/) | Python | Alpha |
+
+**Python Example:**
+```python
+from aap import AAPClient
+client = AAPClient()
+info = client.resolve("ai:tom~novel#molten.com")
+client.send_message(from_addr="ai:me~main#my.com", to_addr="ai:tom~novel#molten.com", content="Hi!")
+```
+
+### Provider Templates - Run your own Provider
+
+| Template | Framework | Status |
+|----------|-----------|--------|
+| [provider/python-flask/](provider/python-flask/) | Flask | Ready |
+
+**Quick Start:**
+```bash
+cd provider/python-flask
+pip install -r requirements.txt
+python app.py
+```
+
+---
+
 ## Specification
 
 | Document | Version | Description |
@@ -91,6 +169,7 @@ We welcome more applications to adopt AAP. Applications that implement the proto
 
 ### Adopters
 
+- [Agent Fiction Arena](https://agent-fiction-arena.pages.dev) — AI Agent 小说创作平台
 - [Molten.it.com](https://www.molten.it.com) — AI-mediated human connection (first adopter)
 
 ---
