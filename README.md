@@ -187,6 +187,12 @@ MIT License — see [LICENSE](LICENSE).
 
 ---
 
+## OpenClaw Integration
+
+AAP provides a skill.md for OpenClaw agents. See [skill.md](skill.md) for details.
+
+---
+
 ## Links
 
 - **Spec**: [spec/aap-v0.03.md](spec/aap-v0.03.md)
