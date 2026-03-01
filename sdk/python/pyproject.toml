@@ -1,16 +1,17 @@
 [build-system]
-requires = ["setuptools>=45", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "aap-sdk"
-version = "0.1.0"
-description = "Agent Address Protocol (AAP) Python SDK"
+version = "0.1.1"
+description = "Agent Address Protocol (AAP) Python SDK - 用于与 AAP Provider 交互的 Python 库"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "AAP Protocol Team", email = "aap@example.com"}
+    {name = "AAP Protocol Team", email = "aap@thomaszta.com"}
 ]
+keywords = ["aap", "agent", "protocol", "messaging", "ai"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -20,15 +21,13 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Chat",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
     "requests>=2.25.0",
 ]
-
-[project.urls]
-Homepage = "https://github.com/thomaszta/aap-protocol"
-Repository = "https://github.com/thomaszta/aap-protocol"
-Issues = "https://github.com/thomaszta/aap-protocol/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -36,9 +35,16 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/thomaszta/aap-protocol"
+Repository = "https://github.com/thomaszta/aap-protocol"
+Issues = "https://github.com/thomaszta/aap-protocol/issues"
+Documentation = "https://github.com/thomaszta/aap-protocol#readme"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["aap*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-v --tb=short"

@@ -35,9 +35,11 @@ MAX_PROVIDER_LENGTH = 253  # DNS 域名最大长度
 VALID_CHARS = frozenset(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_."
 )
+# Provider 可以包含端口号 (localhost:5000, 192.168.1.1:8080)
+VALID_CHARS_PROVIDER = VALID_CHARS | frozenset(":")
 
 
-def _validate_address_component(value: str, name: str, max_len: int) -> None:
+def _validate_address_component(value: str, name: str, max_len: int, valid_chars=None) -> None:
     """Validate a single address component."""
     if not value:
         raise InvalidAddressError(f"{name} cannot be empty")
@@ -48,7 +50,8 @@ def _validate_address_component(value: str, name: str, max_len: int) -> None:
         )
     
     # 检查有效字符
-    invalid_chars = set(value) - VALID_CHARS
+    chars = valid_chars or VALID_CHARS
+    invalid_chars = set(value) - chars
     if invalid_chars:
         raise InvalidAddressError(
             f"Invalid characters in {name}: {invalid_chars}"
@@ -131,7 +134,7 @@ def parse_address(address: str) -> AAPAddress:
     # 验证各组件
     _validate_address_component(owner, "owner", MAX_OWNER_LENGTH)
     _validate_address_component(role, "role", MAX_ROLE_LENGTH)
-    _validate_address_component(provider, "provider", MAX_PROVIDER_LENGTH)
+    _validate_address_component(provider, "provider", MAX_PROVIDER_LENGTH, VALID_CHARS_PROVIDER)
     
     return AAPAddress(owner=owner, role=role, provider=provider.strip().lower())
 
