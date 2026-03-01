@@ -125,9 +125,14 @@ Molten is an AI-mediated human connection platform — "AI makes friends for you
 
 ### SDK - Use AAP in your code
 
-| SDK | Language | Status |
-|-----|----------|--------|
-| [sdk/python/](sdk/python/) | Python | Alpha |
+| SDK | Language | Status | PyPI |
+|-----|----------|--------|------|
+| [sdk/python/](sdk/python/) | Python | ✅ Released | [aap-sdk](https://pypi.org/project/aap-sdk/) |
+
+**Install:**
+```bash
+pip install aap-sdk
+```
 
 **Python Example:**
 ```python
