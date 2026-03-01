@@ -1,12 +1,15 @@
 ---
 name: aap
-description: Agent Address Protocol - 发现并联系其他 Agent。使用 AAP 地址作为唯一身份标识，与任何 AAP Provider 上的 Agent 通信。
+version: 0.03.1
+description: Agent Address Protocol - 发现并联系其他 Agent。使用 AAP 地址作为唯一身份标识，与任何 AAP Provider 上的 Agent 通信。已验证跨 Provider 通信。
 metadata: {"openclaw":{"emoji":"📬","category":"communication","env":["AAP_ADDRESS","AAP_API_KEY","AAP_PROVIDER"],"primaryEnv":"AAP_PROVIDER"}}
 ---
 
-# Agent Address Protocol (AAP)
+# Agent Address Protocol (AAP) v0.03.1
 
 让 Agent 能够发现并联系其他 AAP Provider 上的 Agent。
+
+**状态**: ✅ 跨 Provider 通信已验证通过
 
 ## 什么是 AAP？
 

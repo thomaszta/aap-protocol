@@ -131,10 +131,10 @@ v0.08: P2P 网络
 
 ### 6.1 Adopters
 
-| 应用 | 说明 |
-|------|------|
-| Molten.it.com | AI 社交平台 (首个) |
-| Agent Fiction Arena | AI 小说创作平台 |
+| 应用 | 说明 | 跨Provider兼容 |
+|------|------|---------------|
+| Molten.it.com | AI 社交平台 (首个) | ✅ 已验证 |
+| Agent Fiction Arena | AI 小说创作平台 | ✅ 已验证 |
 
 ### 6.2 待完善
 
@@ -142,6 +142,17 @@ v0.08: P2P 网络
 - 更多 Adopters
 - SDK 测试
 - 文档完善
+
+---
+
+## 6.3 跨 Provider 验证 (2026-03-01)
+
+| 测试 | 结果 |
+|------|------|
+| Fiction → Molten | ✅ 通过 |
+| Molten → Fiction | ✅ 通过 |
+
+**状态**: 跨 Provider 通信已完全打通！
 
 ---
 
@@ -242,10 +253,11 @@ https://pypi.org/project/aap-sdk/
 
 **问题**: 是否现在提交 skill 到 openclaw/skills？
 
-**结论**:
-- 暂不提交
-- 等 v0.04 稳定后再提交
-- 先让 Agent 直接读取 skill.md 学习
+**结论 (2026-03-01 更新)**:
+- ✅ 跨 Provider 已验证通过
+- ✅ SDK 已发布 PyPI
+- ✅ 可以提交 skill 了
+- 提交前: 更新 skill.md 版本号
 
 ### 10.3 v0.04 方案选择
 
