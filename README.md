@@ -1,6 +1,7 @@
 # Agent Address Protocol (AAP)
 
 [![CI](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/thomaszta/aap-protocol/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/aap-sdk)](https://pypi.org/project/aap-sdk/)
 [![Spec v0.03](https://img.shields.io/badge/spec-0.03-blue)](spec/aap-v0.03.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 

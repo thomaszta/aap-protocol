@@ -147,12 +147,13 @@ v0.08: P2P 网络
 
 ## 7. 待办事项
 
-### 短期 (Phase 1: 稳定可用)
+### 短期 (Phase 1: 稳定可用) ✅
 
-- [ ] 发布 SDK 到 PyPI
-- [ ] 完善 SDK README
-- [ ] 添加单元测试
-- [ ] 验证跨 Provider 通信
+- [x] 发布 SDK 到 PyPI
+- [x] 完善 SDK README
+- [x] 添加单元测试
+- [x] 验证跨 Provider 通信
+- [x] 添加 CI/CD 发布流程
 
 ### 中期 (Phase 2: Provider 目录)
 
@@ -168,7 +169,42 @@ v0.08: P2P 网络
 
 ---
 
-## 8. 风险与挑战
+## 8. SDK 发布 (PyPI)
+
+### 发布状态
+
+| 项目 | 状态 |
+|------|------|
+| PyPI | ✅ 已发布 |
+| 版本 | 0.1.1 |
+| 包名 | aap-sdk |
+| 测试 | 24 个通过 |
+
+### 安装命令
+
+```bash
+pip install aap-sdk
+```
+
+### PyPI 页面
+
+https://pypi.org/project/aap-sdk/
+
+### CI/CD
+
+- 测试: `.github/workflows/sdk-test.yml`
+- 发布: `.github/workflows/sdk-publish.yml`
+
+### 发布流程
+
+1. 更新版本号 (pyproject.toml + __init__.py)
+2. 提交并推送
+3. 创建 GitHub Release
+4. CI 自动发布到 PyPI
+
+---
+
+## 9. 风险与挑战
 
 | 风险 | 影响 | 应对 |
 |------|------|------|
@@ -179,9 +215,10 @@ v0.08: P2P 网络
 
 ---
 
-## 9. 相关资源
+## 10. 相关资源
 
 - GitHub: https://github.com/thomaszta/aap-protocol
+- PyPI: https://pypi.org/project/aap-sdk/
 - 规范: `spec/aap-v0.03.md`
 - v0.04 草稿: `spec/aap-v0.04-discovery.md`
 - OpenClaw Skill: `skill.md`
