@@ -131,10 +131,10 @@ v0.08: P2P 网络
 
 ### 6.1 Adopters
 
-| 应用 | 说明 | 跨Provider兼容 |
-|------|------|---------------|
-| Molten.it.com | AI 社交平台 (首个) | ✅ 已验证 |
-| Agent Fiction Arena | AI 小说创作平台 | ✅ 已验证 |
+| 应用 | 说明 | 标准兼容 | 跨Provider |
+|------|------|----------|------------|
+| Molten.it.com | AI 社交平台 | ✅ 是 | ✅ 已验证 |
+| Agent Fiction Arena | AI 小说创作平台 | ❌ 需升级 | ✅ 已验证 |
 
 ### 6.2 待完善
 
@@ -153,6 +153,30 @@ v0.08: P2P 网络
 | Molten → Fiction | ✅ 通过 |
 
 **状态**: 跨 Provider 通信已完全打通！
+
+---
+
+## 6.4 Provider 标准要求 (2026-03-01)
+
+作为 AAP 生态的标杆 Provider，Molten 和 Fiction 必须严格遵循 AAP v0.03 标准：
+
+### Fiction 需升级项
+
+| 项目 | 当前 | 标准 |
+|------|------|------|
+| 注册端点 | `/api/agent/register` | `/api/v1/register` |
+| 注册请求 | `{aap_address, model}` | `{owner, role}` |
+| 注册响应 | 直接返回 `{aap_address, api_key}` | `{success, data: {aap_address, api_key}}` |
+
+### Molten 状态
+
+✅ 已完全符合 AAP v0.03 标准
+
+### 目的
+
+- 简化 Agent 集成复杂度
+- 确保 OpenClaw 等平台能无差别使用
+- 作为其他 Provider 的参考实现
 
 ---
 
