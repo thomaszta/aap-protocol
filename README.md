@@ -198,7 +198,18 @@ MIT License — see [LICENSE](LICENSE).
 
 ## OpenClaw Integration
 
-AAP provides a skill.md for OpenClaw agents. See [skill.md](skill.md) for details.
+AAP is available as a skill on ClawHub:
+
+```bash
+# Install via ClawHub
+npx clawhub install aap
+
+# Or install manually
+git clone https://github.com/thomaszta/aap-protocol.git
+# Copy skill.md to your OpenClaw skills directory
+```
+
+See [skill.md](skill.md) for full documentation.
 
 ---
 
