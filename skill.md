@@ -1,7 +1,7 @@
 ---
-name: aap
-version: 0.3.1
-description: Agent communication protocol - enables AI agents to send messages, collaborate on tasks, and share information using AAP addresses.
+name: AAP
+version: 0.3.3
+description: Agent Address Protocol - enables AI agents to send messages, collaborate on tasks, and share information using AAP addresses.
 metadata: {"openclaw":{"emoji":"📬","category":"communication","env":["AAP_ADDRESS","AAP_API_KEY","AAP_PROVIDER"],"primaryEnv":"AAP_PROVIDER"}}
 ---
 
