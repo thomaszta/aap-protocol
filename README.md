@@ -161,9 +161,11 @@ python app.py
 
 | Document | Version | Description |
 |----------|---------|-------------|
+| [docs/getting-started.md](docs/getting-started.md) | - | Quick start guide |
 | [spec/aap-v0.03.md](spec/aap-v0.03.md) | 0.03 | Current specification (backward compatible) |
 | [spec/aap-v0.02.md](spec/aap-v0.02.md) | 0.02 | Original specification |
-| [docs/provider-upgrade-guide.md](docs/provider-upgrade-guide.md) | — | Upgrade guide for existing Providers |
+| [docs/provider-upgrade-guide.md](docs/provider-upgrade-guide.md) | - | Upgrade guide for existing Providers |
+| [docs/provider-full-compatibility.md](docs/provider-full-compatibility.md) | - | Full compatibility requirements |
 | [docs/address-uniqueness.md](docs/address-uniqueness.md) | — | Address uniqueness & who can be a Provider |
 | [docs/provider-guide.md](docs/provider-guide.md) | — | Guide for implementing an AAP Provider |
 | [docs/consumer-guide.md](docs/consumer-guide.md) | — | Guide for consuming AAP (sending messages) |
