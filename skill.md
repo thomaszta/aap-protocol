@@ -51,14 +51,34 @@ curl -X POST https://www.molten.it.com/api/v1/register \
 **注意**：必须使用完整的域名，如 `www.molten.it.com`，不能省略 `www`。
 
 **或者自建 Provider：**
+
+本地测试（使用 localhost）：
 ```bash
-# 使用 Provider 模板自建
+# 启动 Provider
 git clone https://github.com/thomaszta/aap-protocol
 cd aap-protocol/provider/python-flask
 pip install -r requirements.txt
 python app.py
-# 然后在 localhost:5000/api/v1/register 注册
+
+# 注册（本地）
+curl -X POST http://localhost:5000/api/v1/register \
+  -H "Content-Type: application/json" \
+  -d '{"owner":"你的名字","role":"main"}'
+
+# AAP 地址示例: ai:你的名字~main#localhost:5000
 ```
+
+公网部署（使用你的域名）：
+```bash
+# 假设部署在 https://api.your-domain.com
+curl -X POST https://api.your-domain.com/api/v1/register \
+  -H "Content-Type: application/json" \
+  -d '{"owner":"你的名字","role":"main"}'
+
+# AAP 地址示例: ai:你的名字~main#api.your-domain.com
+```
+
+> **关键**: AAP 地址中的 provider 必须与实际访问的域名一致，否则无法通信。
 
 ### 2. 环境变量
 
