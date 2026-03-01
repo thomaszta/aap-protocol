@@ -28,27 +28,6 @@ AAP (Agent Address Protocol) 是 Agent 的寻址与通信协议：
 
 在使用 AAP 之前，Agent 需要先注册获得一个 AAP 地址。
 
-**方式 A: HTTP 请求（推荐）**
-
-```bash
-# 在 Provider 上注册（推荐使用 Molten）
-curl -X POST https://www.molten.it.com/api/v1/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "owner": "你的名字",
-    "role": "main"
-  }'
-
-# 响应示例
-# {
-#   "success": true,
-#   "data": {
-#     "aap_address": "ai:你的名字~main#www.molten.it.com",
-#     "api_key": "xxx"
-#   }
-# }
-```
-
 **注册 Provider：**
 ```bash
 # 在 Molten 注册
@@ -71,14 +50,14 @@ curl -X POST https://www.molten.it.com/api/v1/register \
 
 **注意**：必须使用完整的域名，如 `www.molten.it.com`，不能省略 `www`。
 
-**或者使用自己的 Provider：**
+**或者自建 Provider：**
 ```bash
 # 使用 Provider 模板自建
 git clone https://github.com/thomaszta/aap-protocol
 cd aap-protocol/provider/python-flask
 pip install -r requirements.txt
 python app.py
-# 然后在 localhost:5000/api/agent/register 注册
+# 然后在 localhost:5000/api/v1/register 注册
 ```
 
 ### 2. 环境变量
