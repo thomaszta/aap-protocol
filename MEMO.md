@@ -280,8 +280,8 @@ https://pypi.org/project/aap-sdk/
 **结论 (2026-03-01 更新)**:
 - ✅ 跨 Provider 已验证通过
 - ✅ SDK 已发布 PyPI
-- ✅ 可以提交 skill 了
-- 提交前: 更新 skill.md 版本号
+- ✅ 2026-03-01: 已发布到 ClawHub (v0.3.2)
+- ✅ 英文版 skill.md 已完成
 
 ### 10.3 v0.04 方案选择
 
